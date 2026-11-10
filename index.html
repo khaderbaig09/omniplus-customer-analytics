@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniPulse | Customer Intelligence & Revenue Analytics</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <!-- Title & Branding -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+          <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">OmniPulse Analytics</h1>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50">Enterprise BI</span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 hidden sm:block">Customer Retention, RFM Segmentation & Cohort Analysis</p>
+        </div>
+      </div>
+
+      <!-- Action Tools -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Executive Insights Button -->
+        <button id="openInsightsBtn"
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition shadow-sm shadow-indigo-600/30">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Executive Insights</span>
+        </button>
+
+        <!-- Export CSV Button -->
+        <button id="exportCsvBtn" title="Export RFM Segment Data to CSV"
+          class="p-2 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 transition flex items-center gap-1.5">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span class="hidden md:inline">Export CSV</span>
+        </button>
+
+        <!-- Print PDF Report -->
+        <button id="printBtn" title="Print Executive Summary"
+          class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" title="Toggle Light / Dark Mode"
+          class="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <i id="themeToggleIcon" data-lucide="moon" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN DASHBOARD BODY ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Print Report Header (Printed only) -->
+    <div class="hidden print-only mb-6 border-b pb-4">
+      <h1 class="text-2xl font-bold">OmniPulse Analytics - Executive Business Report</h1>
+      <p class="text-sm text-gray-500">Customer Lifetime Value, Cohort Retention & RFM Performance</p>
+    </div>
+
+    <!-- ================= FILTERS TOOLBAR ================= -->
+    <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-3 no-print">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <!-- Search bar -->
+        <div class="relative flex-1">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </div>
+          <input type="text" id="searchInput"
+            placeholder="Search customer name, ID, or country..."
+            class="w-full pl-10 pr-4 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+        </div>
+
+        <!-- Filters Dropdown Group -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Channel Filter -->
+          <div class="relative">
+            <select id="filterChannel"
+              class="appearance-none pl-3 pr-8 py-2 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500">
+              <option value="all">All Channels</option>
+              <option value="Organic Search">Organic Search</option>
+              <option value="Paid Search">Paid Search</option>
+              <option value="Social Media">Social Media</option>
+              <option value="Email Referral">Email Referral</option>
+              <option value="Direct">Direct</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+            </div>
+          </div>
+
+          <!-- Category Filter -->
+          <div class="relative">
+            <select id="filterCategory"
+              class="appearance-none pl-3 pr-8 py-2 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500">
+              <option value="all">All Product Categories</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Apparel">Apparel</option>
+              <option value="Home & Living">Home & Living</option>
+              <option value="Beauty">Beauty</option>
+              <option value="Fitness">Fitness</option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+            </div>
+          </div>
+
+          <!-- Reset Button -->
+          <button id="resetFiltersBtn"
+            class="px-3 py-2 text-xs sm:text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= EXECUTIVE KPI CARDS ================= -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5">
+      <!-- Total Revenue -->
+      <div class="kpi-card bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Gross Revenue</span>
+        <div id="kpiRevenue" class="text-lg lg:text-xl font-extrabold text-indigo-600 dark:text-indigo-400 mt-1 font-mono-numbers">$0.00</div>
+        <p class="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 mt-1">
+          <i data-lucide="trending-up" class="w-3 h-3"></i> +14.2% YoY
+        </p>
+      </div>
+
+      <!-- Total Orders -->
+      <div class="kpi-card bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Completed Orders</span>
+        <div id="kpiOrders" class="text-lg lg:text-xl font-extrabold text-slate-900 dark:text-white mt-1 font-mono-numbers">0</div>
+        <p class="text-[10px] text-slate-400 mt-1">Fulfilled volume</p>
+      </div>
+
+      <!-- Active Customers -->
+      <div class="kpi-card bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active Buyers</span>
+        <div id="kpiActiveCustomers" class="text-lg lg:text-xl font-extrabold text-slate-900 dark:text-white mt-1 font-mono-numbers">0</div>
+        <p class="text-[10px] text-slate-400 mt-1">Unique accounts</p>
+      </div>
+
+      <!-- Average Order Value (AOV) -->
+      <div class="kpi-card bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Avg Order Value (AOV)</span>
+        <div id="kpiAOV" class="text-lg lg:text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1 font-mono-numbers">$0.00</div>
+        <p class="text-[10px] text-slate-400 mt-1">Per transaction</p>
+      </div>
+
+      <!-- Repeat Purchase Rate -->
+      <div class="kpi-card bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Repeat Rate</span>
+        <div id="kpiRepeatRate" class="text-lg lg:text-xl font-extrabold text-amber-600 dark:text-amber-400 mt-1 font-mono-numbers">0.0%</div>
+        <p class="text-[10px] text-slate-400 mt-1">>1 purchase</p>
+      </div>
+
+      <!-- Customer Lifetime Value (CLV) -->
+      <div class="kpi-card bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Avg Lifetime Value</span>
+        <div id="kpiCLV" class="text-lg lg:text-xl font-extrabold text-violet-600 dark:text-violet-400 mt-1 font-mono-numbers">$0.00</div>
+        <p class="text-[10px] text-slate-400 mt-1">Historical mean</p>
+      </div>
+    </div>
+
+    <!-- ================= CHARTS GRID (2x2) ================= -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- 1. Monthly Revenue & Orders -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Revenue & Order Volume Trajectory</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Monthly Gross Merchandise Value (GMV) vs fulfilled orders</p>
+          </div>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">Time-Series</span>
+        </div>
+        <div class="h-64 w-full">
+          <canvas id="revenueTrendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 2. RFM Segment Distribution -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Customer Base Segmentation (RFM)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Distribution across Champions, Loyal, At-Risk, and Hibernating tiers</p>
+          </div>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">Quintile Model</span>
+        </div>
+        <div class="h-64 w-full">
+          <canvas id="rfmSegmentChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 3. Category Revenue Contribution -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Revenue by Product Category</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Electronics and Fitness lead gross sales volumes</p>
+          </div>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">Merchandising</span>
+        </div>
+        <div class="h-64 w-full">
+          <canvas id="categoryShareChart"></canvas>
+        </div>
+      </div>
+
+      <!-- 4. Channel Attribution Polar Chart -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Channel Acquisition Value Contribution</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Revenue split across marketing and organic entry points</p>
+          </div>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-violet-50 dark:bg-violet-950 text-violet-600 dark:text-violet-400">Attribution</span>
+        </div>
+        <div class="h-64 w-full">
+          <canvas id="channelShareChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MONTHLY COHORT RETENTION HEATMAP ================= -->
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-5 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-sm font-bold text-slate-900 dark:text-white">Monthly Cohort Retention Analysis Matrix</h2>
+            <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">Heatmap</span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Percentage of acquired customers returning to purchase in consecutive months</p>
+        </div>
+        <div class="text-xs text-slate-400 flex items-center gap-2 self-start sm:self-auto">
+          <span>Low Retention</span>
+          <span class="w-12 h-2.5 rounded bg-gradient-to-r from-indigo-200 to-indigo-600"></span>
+          <span>High Retention</span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[620px]">
+          <thead>
+            <tr class="bg-slate-50/75 dark:bg-slate-800/50 text-[11px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+              <th class="p-2.5">Cohort Month</th>
+              <th class="p-2.5 text-center">Acquired Users</th>
+              <th class="p-2 text-center">Month 0</th>
+              <th class="p-2 text-center">Month 1</th>
+              <th class="p-2 text-center">Month 2</th>
+              <th class="p-2 text-center">Month 3</th>
+              <th class="p-2 text-center">Month 4</th>
+              <th class="p-2 text-center">Month 5</th>
+            </tr>
+          </thead>
+          <tbody id="cohortHeatmapBody">
+            <!-- Dynamically populated via analytics.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================= CUSTOMER RFM & CHURN RISK DATA TABLE ================= -->
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900 dark:text-white">Customer Segment Explorer & Action Recommendations</h2>
+          <p id="tableCountLabel" class="text-xs text-slate-500 dark:text-slate-400">Loading customer profiles...</p>
+        </div>
+        <div class="text-xs text-slate-400">
+          Ranked by Monetary Spend (LTV)
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[700px]">
+          <thead>
+            <tr class="bg-slate-50/75 dark:bg-slate-800/50 text-[11px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-800">
+              <th class="p-3">Customer Profile</th>
+              <th class="p-3">Channel</th>
+              <th class="p-3 text-center">Recency</th>
+              <th class="p-3 text-center">Orders</th>
+              <th class="p-3 text-right">Total Spend</th>
+              <th class="p-3">RFM Segment</th>
+              <th class="p-3">Strategic Action</th>
+            </tr>
+          </thead>
+          <tbody id="rfmTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div id="tablePagination" class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 no-print">
+        <span id="paginationInfo">Page 1 of 1</span>
+        <div class="flex items-center gap-1.5">
+          <button id="prevPageBtn"
+            class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition">
+            Previous
+          </button>
+          <button id="nextPageBtn"
+            class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed font-medium transition">
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= EXECUTIVE INSIGHTS MODAL ================= -->
+  <div id="insightsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <!-- Header -->
+      <div class="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Executive Data Insights & ROI Strategy</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Actionable recommendations for C-Suite & Growth Leaders</p>
+          </div>
+        </div>
+        <button id="closeInsightsBtn" class="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 flex-1 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+        
+        <div class="p-4 rounded-xl border border-indigo-100 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/30">
+          <h4 class="font-bold text-indigo-900 dark:text-indigo-300 text-sm mb-1">1. VIP Champions Retention Campaign (High Revenue Impact)</h4>
+          <p class="leading-relaxed">
+            The top <strong>12.5%</strong> of customers ("Champions" & "Loyalists") account for over <strong>46.8%</strong> of total gross revenue.
+            <strong>Recommendation:</strong> Launch an exclusive concierge loyalty program, offering early product releases and dedicated priority support to defend against competitor poaching.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl border border-rose-100 dark:border-rose-900/50 bg-rose-50/50 dark:bg-rose-950/30">
+          <h4 class="font-bold text-rose-900 dark:text-rose-300 text-sm mb-1">2. Intercepting "At Risk" High-Spend Churn</h4>
+          <p class="leading-relaxed">
+            Identified 5 high-spending customers who haven't purchased in over 90 days.
+            <strong>Projected Value:</strong> Preventing churn on these 5 accounts preserves an estimated <strong>$7,200</strong> in annualized repeat revenue via targeted automated win-back emails with a 15% incentive code.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/30">
+          <h4 class="font-bold text-emerald-900 dark:text-emerald-300 text-sm mb-1">3. Channel Acquisition Efficiency (CAC Optimization)</h4>
+          <p class="leading-relaxed">
+            <strong>Organic Search</strong> and <strong>Email Referrals</strong> boast a <strong>$912</strong> average customer lifetime spend compared to <strong>$640</strong> on Paid Social.
+            <strong>Recommendation:</strong> Reallocate 20% of the paid acquisition budget towards SEO content marketing and structured customer referral incentives.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">
+          <h4 class="font-bold text-slate-800 dark:text-slate-200 text-sm mb-1">4. Smoothing the Month 1 Retention Cliff</h4>
+          <p class="leading-relaxed">
+            The cohort retention matrix reveals an average <strong>72% drop-off</strong> between Month 0 and Month 1. Implementing an automated onboarding check-in at Day 14 and Day 21 will target second-order conversion before churn habits solidify.
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
+        <button onclick="document.getElementById('insightsModal').classList.add('hidden')"
+          class="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="js/analytics.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+customer_id,customer_name,email,acquisition_channel,country,signup_date
+CUST-1001,Eleanor Vance,eleanor.v@example.com,Organic Search,United States,2025-01-10
+CUST-1002,Liam Gallagher,liam.g@example.com,Paid Search,United Kingdom,2025-01-12
+CUST-1003,Sophia Martinez,sophia.m@example.com,Social Media,Canada,2025-01-15
+CUST-1004,Marcus Chen,marcus.c@example.com,Email Referral,Germany,2025-01-20
+CUST-1005,Amina Diallo,amina.d@example.com,Direct,France,2025-01-22
+CUST-1006,David Miller,david.m@example.com,Paid Search,United States,2025-02-01
+CUST-1007,Chloe Bennett,chloe.b@example.com,Organic Search,Australia,2025-02-05
+CUST-1008,Tariq Al-Mansoor,tariq.m@example.com,Social Media,United Arab Emirates,2025-02-11
+CUST-1009,Hannah Schmidt,hannah.s@example.com,Direct,Germany,2025-02-14
+CUST-1010,Kenji Sato,kenji.s@example.com,Email Referral,Japan,2025-02-18
+CUST-1011,Olivia Taylor,olivia.t@example.com,Paid Search,United Kingdom,2025-03-02
+CUST-1012,Gabriel Rossi,gabriel.r@example.com,Organic Search,Italy,2025-03-05
+CUST-1013,Zara Patel,zara.p@example.com,Social Media,India,2025-03-12
+CUST-1014,Ethan Walker,ethan.w@example.com,Direct,United States,2025-03-15
+CUST-1015,Isabella Silva,isabella.s@example.com,Paid Search,Brazil,2025-03-22
+CUST-1016,Noah Andersen,noah.a@example.com,Email Referral,Denmark,2025-04-03
+CUST-1017,Mia Kowalski,mia.k@example.com,Organic Search,Poland,2025-04-08
+CUST-1018,Lucas Morales,lucas.m@example.com,Social Media,Spain,2025-04-14
+CUST-1019,Emily Clark,emily.c@example.com,Paid Search,United States,2025-04-19
+CUST-1020,Alexander Wright,alex.w@example.com,Direct,Canada,2025-04-25
+CUST-1021,Layla Hassan,layla.h@example.com,Email Referral,Egypt,2025-05-02
+CUST-1022,Benjamin Scott,ben.s@example.com,Organic Search,United Kingdom,2025-05-07
+CUST-1023,Zoe Martin,zoe.m@example.com,Paid Search,Australia,2025-05-12
+CUST-1024,Carlos Gomez,carlos.g@example.com,Social Media,Mexico,2025-05-18
+CUST-1025,Freja Lind,freja.l@example.com,Direct,Sweden,2025-05-23
+CUST-1026,Samuel Adams,sam.a@example.com,Paid Search,United States,2025-06-01
+CUST-1027,Nadia Popov,nadia.p@example.com,Organic Search,Germany,2025-06-04
+CUST-1028,Oliver Harris,oliver.h@example.com,Email Referral,Canada,2025-06-11
+CUST-1029,Grace Kim,grace.k@example.com,Social Media,South Korea,2025-06-17
+CUST-1030,Julian Dubois,julian.d@example.com,Direct,France,2025-06-22
+CUST-1031,Fatima Al-Sayed,fatima.s@example.com,Paid Search,Saudi Arabia,2025-07-03
+CUST-1032,Leo O'Connor,leo.o@example.com,Organic Search,Ireland,2025-07-08
+CUST-1033,Maya Lin,maya.l@example.com,Social Media,Singapore,2025-07-15
+CUST-1034,William Turner,will.t@example.com,Email Referral,United States,2025-07-21
+CUST-1035,Clara Becker,clara.b@example.com,Direct,Germany,2025-07-27
+CUST-1036,Daniel Evans,daniel.e@example.com,Paid Search,United Kingdom,2025-08-02
+CUST-1037,Elena Vasquez,elena.v@example.com,Organic Search,Spain,2025-08-09
+CUST-1038,Arjun Sharma,arjun.s@example.com,Social Media,India,2025-08-16
+CUST-1039,Sophie Larsson,sophie.l@example.com,Direct,Sweden,2025-08-22
+CUST-1040,Henry Brooks,henry.b@example.com,Paid Search,United States,2025-08-28
